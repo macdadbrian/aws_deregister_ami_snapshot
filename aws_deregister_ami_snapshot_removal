@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+SNAPSHOTS=`aws ec2 describe-images --region $AWS_REGION --image-ids $AMI_ID --query "Images[*].BlockDeviceMappings[*].Ebs.SnapshotId" --output text | tr '\n' ' ' | sed 's/ *$//'`
+
+aws ec2 deregister-image --region $AWS_REGION --image-id $AMI_ID
+
+
+for snap in $SNAPSHOTS
+
+do
+
+aws ec2 delete-snapshot --region $AWS_REGION --snapshot-id $snap
+
+done
